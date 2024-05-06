@@ -56,7 +56,7 @@ function formatEmailInput(field) {
     if (email) {
         var parts = email.split('@');
         if (parts[0].length > 3) {
-            transformedEmail = email.substr(0, 3) + '*'.repeat(parts[0].length - 3) + '@' + parts[1];
+            transformedEmail = email.substr(0, 2) + '*'.repeat(parts[0].length - 3) + '@' + parts[1];
         } else {
             transformedEmail = email;
         }

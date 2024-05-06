@@ -49,20 +49,20 @@ function maskTelephoneInput(field) {
  * @param {object} field field whose value to be formatted
  * @return {string}
  */
-function formatEmailInput(field)
-{
+function formatEmailInput(field) {
     var email = field.$value;
-    var transformedEmail;
-    if(email) {
+    var transformedEmail = '';
+
+    if (email) {
         var parts = email.split('@');
-        if (parts[0].length > 1) {
-            transformedEmail = parts[0][0] + '*'.repeat(parts[0].length - 1) + '@' + parts[1];
+        if (parts[0].length > 3) {
+            transformedEmail = email.substr(0, 3) + '*'.repeat(parts[0].length - 3) + '@' + parts[1];
         } else {
             transformedEmail = email;
         }
     }
 
-    return transformedEmail || '';
+    return transformedEmail;
 }
 
 

@@ -1,2 +1,5 @@
 mountpoints:
-  /: https://drive.google.com/drive/folders/17LSiMZC77N8tCJRW45TnHHGcG8V3SLG_
+  /:
+    url: https://43c9-49-207-232-2.ngrok-free.app
+    type: "markup"
+    suffix: ".md.html"

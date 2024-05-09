@@ -65,6 +65,15 @@ function formatEmailInput(field) {
     return transformedEmail;
 }
 
+/**
+ * Sets the error message of a component
+ * @name setErrorMessage Formats telephone input
+ * @param {scope} globals
+ */
+function setErrorMessage(globals) {
+  globals.functions.markAsInvalid('$form.field', 'This field has errror, please check!');
+}
+
 
 // eslint-disable-next-line import/prefer-default-export
 export { getFullName, days, maskTelephoneInput, formatEmailInput };

@@ -67,7 +67,7 @@ function formatEmailInput(field) {
 
 /**
  * Sets the error message of a component
- * @name setErrorMessage Formats telephone input
+ * @name setErrorMessage Set Error message
  * @param {scope} globals
  */
 function setErrorMessage(globals) {

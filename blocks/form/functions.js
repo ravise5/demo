@@ -69,6 +69,7 @@ function formatEmailInput(field) {
  * Sets the error message of a component
  * @name setErrorMessage Set Error message
  * @param {scope} globals
+ * @return {string}
  */
 function setErrorMessage(globals) {
   globals.functions.markAsInvalid('$form.field', 'This field has errror, please check!');

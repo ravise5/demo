@@ -1,22 +1,22 @@
 /*************************************************************************
-* ADOBE CONFIDENTIAL
-* ___________________
-*
-* Copyright 2022 Adobe
-* All Rights Reserved.
-*
-* NOTICE: All information contained herein is, and remains
-* the property of Adobe and its suppliers, if any. The intellectual
-* and technical concepts contained herein are proprietary to Adobe
-* and its suppliers and are protected by all applicable intellectual
-* property laws, including trade secret and copyright laws.
-* Dissemination of this information or reproduction of this material
-* is strictly forbidden unless prior written permission is obtained
-* from Adobe.
+ * ADOBE CONFIDENTIAL
+ * ___________________
+ *
+ * Copyright 2022 Adobe
+ * All Rights Reserved.
+ *
+ * NOTICE: All information contained herein is, and remains
+ * the property of Adobe and its suppliers, if any. The intellectual
+ * and technical concepts contained herein are proprietary to Adobe
+ * and its suppliers and are protected by all applicable intellectual
+ * property laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe.
 
-* Adobe permits you to use and modify this file solely in accordance with
-* the terms of the Adobe license agreement accompanying it.
-*************************************************************************/
+ * Adobe permits you to use and modify this file solely in accordance with
+ * the terms of the Adobe license agreement accompanying it.
+ *************************************************************************/
 
 import { propertyChange, ExecuteRule, Initialize, RemoveItem, FormLoad, FieldChanged, ValidationComplete, Change, Valid, Invalid, SubmitSuccess, CustomEvent, SubmitError, SubmitFailure, Submit, RemoveInstance, AddInstance, Reset, AddItem, Click } from './afb-events.js';
 import Formula from '../formula/index.js';
@@ -1912,9 +1912,9 @@ class Container extends Scriptable {
                         ...(value?.id ? { id: this.form.getUniqueId() } : {})
                     };
                     return [key, {
-                            ...value,
-                            ...newObjWithId
-                        }
+                        ...value,
+                        ...newObjWithId
+                    }
                     ];
                 }
                 else {
@@ -2625,8 +2625,23 @@ class FunctionRuntimeImpl {
                                 },
                                 submitForm: (payload, validateForm, contentType) => {
                                     const submitAs = contentType || 'multipart/form-data';
-                                    const args = ['custom:submitSuccess', 'custom:submitError', submitAs, payload, validateForm];
+                                    const args = [payload, validateForm, submitAs];
                                     return FunctionRuntimeImpl.getInstance().getFunctions().submitForm._func.call(undefined, args, data, interpreter);
+                                },
+                                markFieldAsInvalid: (fieldIdentifier, validationMessage, option) => {
+                                    if (!option || option.useId) {
+                                        interpreter.globals.form.getElement(fieldIdentifier)?.markAsInvalid(validationMessage);
+                                    }
+                                    else if (option && option.useDataRef) {
+                                        interpreter.globals.form.visit(function callback(f) {
+                                            if (f.dataRef === fieldIdentifier) {
+                                                f.markAsInvalid(validationMessage);
+                                            }
+                                        });
+                                    }
+                                    else if (option && option.useQualifiedName) {
+                                        interpreter.globals.form.resolveQualifiedName(fieldIdentifier)?.markAsInvalid(validationMessage);
+                                    }
                                 }
                             }
                         };
@@ -2728,8 +2743,8 @@ class FunctionRuntimeImpl {
             },
             submitForm: {
                 _func: (args, data, interpreter) => {
-                    let success = 'custom:submitSuccess';
-                    let error = 'custom:submitError';
+                    let success = null;
+                    let error = null;
                     let submit_data;
                     let validate_form;
                     let submit_as;
@@ -4244,7 +4259,7 @@ class FormFieldFactoryImpl {
             fieldFactory: this
         };
         child.fieldType = child.fieldType ? (child.fieldType in alternateFieldTypeMapping ?
-            alternateFieldTypeMapping[child.fieldType] : child.fieldType)
+                alternateFieldTypeMapping[child.fieldType] : child.fieldType)
             : 'text-input';
         if (isRepeatable$1(child)) {
             const newChild = {

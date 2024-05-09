@@ -76,4 +76,4 @@ function setErrorMessage(globals) {
 
 
 // eslint-disable-next-line import/prefer-default-export
-export { getFullName, days, maskTelephoneInput, formatEmailInput };
+export { getFullName, days, maskTelephoneInput, formatEmailInput, setErrorMessage };

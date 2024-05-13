@@ -72,7 +72,7 @@ function formatEmailInput(field) {
  * @return {string}
  */
 function setErrorMessage(globals) {
-  globals.functions.markFieldAsInvalid('$form.field', 'This field has errror, please check!', { useQualifiedName: true } );
+  globals.functions.markFieldAsInvalid('$form.field', 'This field has error, please check!', { useQualifiedName: true });
 }
 
 

@@ -1,5 +1,5 @@
 mountpoints:
   /:
-    url: https://43c9-49-207-232-2.ngrok-free.app/
+    url: https://5255-130-248-127-34.ngrok-free.app/
     type: "markup"
     suffix: ".md.html"

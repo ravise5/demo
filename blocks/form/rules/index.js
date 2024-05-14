@@ -43,8 +43,8 @@ async function fieldChanged(payload, form, generateFormRendition) {
       case 'validationMessage':
         {
           const { validity } = payload.field;
-          // eslint-disable-next-line max-len
-          if (field.setCustomValidity && (validity.expressionMismatch || validity.customConstraint)) {
+          if (field.setCustomValidity
+              && (validity?.expressionMismatch || validity?.customConstraint)) {
             field.setCustomValidity(currentValue);
             updateOrCreateInvalidMsg(field, currentValue);
           }

@@ -76,5 +76,15 @@ function setErrorMessage(globals) {
 }
 
 
+/**
+ * Sets the focus on field
+ * @name setFocusOnField Set Focus On Field
+ * @param {scope} globals
+ * @return {string}
+ */
+function setFocusOnField(globals) {
+  globals.functions.setFocus('$form.field');
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export { getFullName, days, maskTelephoneInput, formatEmailInput, setErrorMessage };
+export { getFullName, days, maskTelephoneInput, formatEmailInput, setErrorMessage, setFocusOnField };

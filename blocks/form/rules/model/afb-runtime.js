@@ -2642,6 +2642,10 @@ class FunctionRuntimeImpl {
                                     else if (option && option.useQualifiedName) {
                                         interpreter.globals.form.resolveQualifiedName(fieldIdentifier)?.markAsInvalid(validationMessage);
                                     }
+                                },
+                                setFocus: (fieldIdentifier, flag) => {
+                                    const args = [fieldIdentifier, flag];
+                                    return FunctionRuntimeImpl.getInstance().getFunctions().setFocus._func.call(undefined, args, data, interpreter);
                                 }
                             }
                         };

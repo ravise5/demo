@@ -2992,9 +2992,9 @@ class Form extends Container {
     }
     _findActiveField(field) {
         if (field?.isContainer) {
-            this._findActiveField(field?.activeChild);
+            return field;
         }
-        return field;
+        this._findActiveField(field?.activeChild);
     }
     get logger() {
         return this._logger;

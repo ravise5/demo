@@ -2994,7 +2994,7 @@ class Form extends Container {
         if (!field?.isContainer) {
             return field;
         }
-        this._findActiveField(field?.activeChild);
+        return this._findActiveField(field?.activeChild);
     }
     get logger() {
         return this._logger;

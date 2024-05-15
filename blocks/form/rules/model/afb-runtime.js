@@ -2988,7 +2988,7 @@ class Form extends Container {
     }
     _logger;
     getActiveField() {
-        return this._findActiveField(this.activeChild);
+        return this._findActiveField(this);
     }
     _findActiveField(field) {
         if (!field?.isContainer) {

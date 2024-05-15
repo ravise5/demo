@@ -2885,6 +2885,16 @@ class Form extends Container {
         }
     }
     _logger;
+
+    getActiveField() {
+        return this.findActiveField(this.activeChild);
+    }
+    findActiveField(field) {
+        if (field?.activeChild) {
+            return field.activeChild.isContainer ? this.findActiveField(field?.activeChild) : field.activeChild;
+        }
+        return null;
+    }
     get logger() {
         return this._logger;
     }

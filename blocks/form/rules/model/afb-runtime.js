@@ -2991,7 +2991,7 @@ class Form extends Container {
         return this._findActiveField(this.activeChild);
     }
     _findActiveField(field) {
-        if (field?.isContainer) {
+        if (!field?.isContainer) {
             return field;
         }
         this._findActiveField(field?.activeChild);

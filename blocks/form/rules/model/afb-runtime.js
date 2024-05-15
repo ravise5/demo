@@ -3458,7 +3458,7 @@ class Field extends Scriptable {
     set valid(e) {
         const validity = {
             valid: e,
-            customConstraint: true
+            ...(e === false ? { customConstraint: true } : {})
         };
         this._setProperty('valid', e);
         this._setProperty('validity', validity);

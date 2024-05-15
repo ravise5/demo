@@ -18,7 +18,7 @@
  * the terms of the Adobe license agreement accompanying it.
  *************************************************************************/
 
-import { propertyChange, ExecuteRule, Initialize, RemoveItem, FormLoad, FieldChanged, ValidationComplete, Change, Valid, Invalid, SubmitSuccess, CustomEvent, SubmitError, SubmitFailure, Submit, RemoveInstance, AddInstance, Reset, AddItem, Click } from './afb-events.js';
+import { propertyChange, ExecuteRule, Initialize, RemoveItem, Change, FormLoad, FieldChanged, ValidationComplete, Valid, Invalid, SubmitSuccess, CustomEvent, SubmitError, SubmitFailure, Submit, Save, RemoveInstance, AddInstance, Reset, AddItem, Click } from './afb-events.js';
 import Formula from '../formula/index.js';
 import { format, parseDefaultDate, datetimeToNumber, parseDateSkeleton, formatDate, numberToDatetime } from './afb-formatters.min.js';
 
@@ -140,8 +140,8 @@ const getProperty = (data, key, def) => {
 };
 const isFile = function (item) {
     return (item?.type === 'file' || item?.type === 'file[]') ||
-        ((item?.type === 'string' || item?.type === 'string[]') &&
-            (item?.format === 'binary' || item?.format === 'data-url'));
+      ((item?.type === 'string' || item?.type === 'string[]') &&
+        (item?.format === 'binary' || item?.format === 'data-url'));
 };
 const isCheckbox = function (item) {
     const fieldType = item?.fieldType || defaultFieldTypes(item);
@@ -188,11 +188,11 @@ const jsonString = (obj) => {
 };
 const isRepeatable$1 = (obj) => {
     return ((obj.repeatable &&
-        ((obj.minOccur === undefined && obj.maxOccur === undefined) ||
-            (obj.minOccur !== undefined && obj.maxOccur !== undefined && obj.maxOccur !== 0) ||
-            (obj.minOccur !== undefined && obj.maxOccur !== undefined && obj.minOccur !== 0 && obj.maxOccur !== 0) ||
-            (obj.minOccur !== undefined && obj.minOccur >= 0) ||
-            (obj.maxOccur !== undefined && obj.maxOccur !== 0))) || false);
+      ((obj.minOccur === undefined && obj.maxOccur === undefined) ||
+        (obj.minOccur !== undefined && obj.maxOccur !== undefined && obj.maxOccur !== 0) ||
+        (obj.minOccur !== undefined && obj.maxOccur !== undefined && obj.minOccur !== 0 && obj.maxOccur !== 0) ||
+        (obj.minOccur !== undefined && obj.minOccur >= 0) ||
+        (obj.maxOccur !== undefined && obj.maxOccur !== 0))) || false);
 };
 class DataValue {
     $_name;
@@ -385,9 +385,9 @@ const repeatable = () => {
 };
 const isAlphaNum = function (ch) {
     return (ch >= 'a' && ch <= 'z')
-        || (ch >= 'A' && ch <= 'Z')
-        || (ch >= '0' && ch <= '9')
-        || ch === '_';
+      || (ch >= 'A' && ch <= 'Z')
+      || (ch >= '0' && ch <= '9')
+      || ch === '_';
 };
 const isGlobal = (prev, stream, pos) => {
     return prev === null && stream[pos] === globalStartToken;
@@ -401,8 +401,8 @@ const isIdentifier = (stream, pos) => {
         return stream.length > pos && isAlphaNum(stream[pos + 1]);
     }
     return (ch >= 'a' && ch <= 'z')
-        || (ch >= 'A' && ch <= 'Z')
-        || ch === '_';
+      || (ch >= 'A' && ch <= 'Z')
+      || ch === '_';
 };
 const isNum = (ch) => {
     return (ch >= '0' && ch <= '9');
@@ -439,7 +439,7 @@ class Tokenizer {
         while (stream[this._current] !== '"' && this._current < maxLength) {
             let current = this._current;
             if (stream[current] === '\\' && (stream[current + 1] === '\\'
-                || stream[current + 1] === '"')) {
+              || stream[current + 1] === '"')) {
                 current += 2;
             }
             else {
@@ -538,8 +538,8 @@ const resolveData = (data, input, create) => {
     let i = 0;
     const createIntermediateNode = (token, nextToken, create) => {
         return nextToken === null ? create :
-            (nextToken.type === TOK_BRACKET) ? new DataGroup(token.value, [], 'array') :
-                new DataGroup(token.value, {});
+          (nextToken.type === TOK_BRACKET) ? new DataGroup(token.value, [], 'array') :
+            new DataGroup(token.value, {});
     };
     while (i < tokens.length && result != null) {
         const token = tokens[i];
@@ -610,9 +610,9 @@ class FileObject {
     }
     equals(obj) {
         return (this.data === obj.data &&
-            this.mediaType === obj.mediaType &&
-            this.name === obj.name &&
-            this.size === obj.size);
+          this.mediaType === obj.mediaType &&
+          this.name === obj.name &&
+          this.size === obj.size);
     }
 }
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'.split('');
@@ -646,8 +646,8 @@ const getAttachments = (input, excludeUnbound = false) => {
                 ret = {};
                 const name = item.name || '';
                 const dataRef = (item.dataRef != null)
-                    ? item.dataRef
-                    : (name.length > 0 ? item.name : undefined);
+                  ? item.dataRef
+                  : (name.length > 0 ? item.name : undefined);
                 if (item.value instanceof Array) {
                     ret[item.id] = item.value.map((x) => {
                         return { ...x, 'dataRef': dataRef };
@@ -918,8 +918,8 @@ const matchMediaType = (mediaType, accepts) => {
         const prefixAccept = trimmedAccept.split('/')[0];
         const suffixAccept = trimmedAccept.split('.')[1];
         return ((trimmedAccept.includes('*') && mediaType.startsWith(prefixAccept)) ||
-            (trimmedAccept.includes('.') && mediaType.endsWith(suffixAccept)) ||
-            (trimmedAccept === mediaType));
+          (trimmedAccept.includes('.') && mediaType.endsWith(suffixAccept)) ||
+          (trimmedAccept === mediaType));
     });
 };
 const partitionArray = (inputVal, validatorFn) => {
@@ -1025,7 +1025,7 @@ const Constraints = {
                     const [nMonth, nDate] = [+month, +date];
                     const leapYear = isLeapYear(+year);
                     valid = (nMonth >= 1 && nMonth <= 12) &&
-                        (nDate >= 1 && nDate <= daysInMonth(leapYear, nMonth));
+                      (nDate >= 1 && nDate <= daysInMonth(leapYear, nMonth));
                 }
                 else {
                     valid = false;
@@ -1139,9 +1139,17 @@ const staticFields = ['plain-text', 'image'];
 class ActionImplWithTarget {
     _action;
     _target;
+    _currentTarget;
     constructor(_action, _target) {
         this._action = _action;
-        this._target = _target;
+        if (_action.target) {
+            this._currentTarget = _target;
+            this._target = _action.target;
+        }
+        else {
+            this._target = _target;
+            this._currentTarget = _target;
+        }
     }
     get type() {
         return this._action.type;
@@ -1154,6 +1162,9 @@ class ActionImplWithTarget {
     }
     get target() {
         return this._target;
+    }
+    get currentTarget() {
+        return this._currentTarget;
     }
     get isCustomEvent() {
         return this._action.isCustomEvent;
@@ -1339,8 +1350,11 @@ class BaseNode {
         return this._jsonModel.uniqueItems;
     }
     isTransparent() {
-        const isNonTransparent = this.parent?._jsonModel.type === 'array';
+        const isNonTransparent = this.parent?._jsonModel?.type === 'array';
         return !this._jsonModel.name && !isNonTransparent;
+    }
+    getDependents() {
+        return this._dependents.map(x => x.node.id);
     }
     getState(forRestore = false) {
         return {
@@ -1356,7 +1370,7 @@ class BaseNode {
             } : {}),
             ':type': this[':type'],
             ...(forRestore ? {
-                _dependents: this._dependents.length ? this._dependents.map(x => x.node.id) : undefined,
+                _dependents: this._dependents.length ? this.getDependents() : undefined,
                 allowedComponents: undefined,
                 columnClassNames: undefined,
                 columnCount: undefined,
@@ -1382,7 +1396,12 @@ class BaseNode {
                     return propsToLook.indexOf(x.propertyName) > -1;
                 }) > -1;
                 if (isPropChanged) {
-                    dependent.dispatch(new ExecuteRule());
+                    if (this.form.changeEventBehaviour === 'deps') {
+                        dependent.dispatch(change);
+                    }
+                    else {
+                        dependent.dispatch(new ExecuteRule());
+                    }
                 }
             });
             this._dependents.push({ node: dependent, subscription });
@@ -1426,7 +1445,7 @@ class BaseNode {
         const oldValue = this._jsonModel[prop];
         let isValueSame = false;
         if (newValue !== null && oldValue !== null &&
-            typeof newValue === 'object' && typeof oldValue === 'object') {
+          typeof newValue === 'object' && typeof oldValue === 'object') {
             isValueSame = JSON.stringify(newValue) === JSON.stringify(oldValue);
         }
         else {
@@ -1447,7 +1466,7 @@ class BaseNode {
         return [];
     }
     _bindToDataModel(contextualDataModel) {
-        if (this.id === '$form') {
+        if (this.fieldType === 'form' || this.id === '$form') {
             this._data = contextualDataModel;
             return;
         }
@@ -1658,16 +1677,23 @@ class Scriptable extends BaseNode {
         return this._events[eName] || [];
     }
     applyUpdates(updates) {
-        Object.entries(updates).forEach(([key, value]) => {
-            if (key in editableProperties || (key in this && typeof this[key] !== 'function')) {
-                try {
-                    this[key] = value;
-                }
-                catch (e) {
-                    console.error(e);
-                }
+        if (typeof updates === 'object') {
+            if (updates !== null) {
+                Object.entries(updates).forEach(([key, value]) => {
+                    if (key in editableProperties || (key in this && typeof this[key] !== 'function')) {
+                        try {
+                            this[key] = value;
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
+                    }
+                });
             }
-        });
+        }
+        else if (typeof updates !== 'undefined') {
+            this.value = updates;
+        }
     }
     executeAllRules(context) {
         const entries = Object.entries(this.getRules());
@@ -1755,6 +1781,11 @@ class Scriptable extends BaseNode {
         const node = this.ruleEngine.compileRule(expr, this.lang);
         return this.ruleEngine.execute(node, this.getExpressionScope(), ruleContext);
     }
+    change(event, context) {
+        if (this.form.changeEventBehaviour === 'deps') {
+            this.executeAllRules(context);
+        }
+    }
     executeAction(action) {
         const context = {
             'form': this.form,
@@ -1774,7 +1805,9 @@ class Scriptable extends BaseNode {
             this[funcName](action, context);
         }
         node.forEach((n) => this.executeEvent(context, n));
-        this.notifyDependents(action);
+        if (action.target === this) {
+            this.notifyDependents(action);
+        }
     }
 }
 const notifyChildrenAttributes = [
@@ -1989,7 +2022,7 @@ class Container extends Scriptable {
     _canHaveRepeatingChildren(mode = 'create') {
         const items = this._jsonModel.items;
         return this._jsonModel.type == 'array' && this.getDataNode() != null &&
-            (items.length === 1 || (items[0].repeatable == true && mode === 'restore'));
+          (items.length === 1 || (items[0].repeatable == true && mode === 'restore'));
     }
     _initialize(mode) {
         super._initialize(mode);
@@ -2543,15 +2576,15 @@ const multipartFormData = (data, attachments) => {
     }
     return formData;
 };
-const submit = async (context, success, error, submitAs = 'multipart/form-data', input_data = null) => {
-    const endpoint = context.form.action;
+const submit = async (context, success, error, submitAs = 'multipart/form-data', input_data = null, action = '', metadata = null) => {
+    const endpoint = action || context.form.action;
     let data = input_data;
     if (typeof data != 'object' || data == null) {
         data = context.form.exportData();
     }
     const attachments = getAttachments(context.form, true);
     let submitContentType = submitAs;
-    const submitDataAndMetaData = { 'data': data, 'submitMetadata': context.form.exportSubmitMetaData() };
+    const submitDataAndMetaData = { 'data': data, ...metadata };
     let formData = submitDataAndMetaData;
     if (Object.keys(attachments).length > 0 || submitAs === 'multipart/form-data') {
         formData = multipartFormData(submitDataAndMetaData, attachments);
@@ -2567,6 +2600,8 @@ const createAction = (name, payload = {}) => {
             return new Change(payload);
         case 'submit':
             return new Submit(payload);
+        case 'save':
+            return new Save(payload);
         case 'click':
             return new Click(payload);
         case 'addItem':
@@ -2642,10 +2677,6 @@ class FunctionRuntimeImpl {
                                     else if (option && option.useQualifiedName) {
                                         interpreter.globals.form.resolveQualifiedName(fieldIdentifier)?.markAsInvalid(validationMessage);
                                     }
-                                },
-                                setFocus: (fieldIdentifier, flag) => {
-                                    const args = [fieldIdentifier, flag];
-                                    return FunctionRuntimeImpl.getInstance().getFunctions().setFocus._func.call(undefined, args, data, interpreter);
                                 }
                             }
                         };
@@ -2776,6 +2807,18 @@ class FunctionRuntimeImpl {
                 },
                 _signature: []
             },
+            saveForm: {
+                _func: (args, data, interpreter) => {
+                    const action = toString(args[0]);
+                    const validate_form = args[2] || false;
+                    interpreter.globals.form.dispatch(new Save({
+                        action,
+                        validate_form
+                    }));
+                    return {};
+                },
+                _signature: []
+            },
             request: {
                 _func: (args, data, interpreter) => {
                     const uri = toString(args[0]);
@@ -2862,6 +2905,51 @@ class FunctionRuntimeImpl {
     }
 }
 const FunctionRuntime = FunctionRuntimeImpl.getInstance();
+class Version {
+    #minor;
+    #major;
+    #subVersion;
+    #invalid = true;
+    constructor(n) {
+        const match = n.match(/([^.]+)\.([^.]+)(?:\.(.+))?/);
+        if (match) {
+            this.#major = +match[1];
+            this.#minor = +match[2];
+            this.#subVersion = match[3] ? +match[3] : 0;
+            if (isNaN(this.#major) || isNaN(this.#minor) || isNaN(this.#subVersion)) {
+                throw new Error('Invalid version string ' + n);
+            }
+        }
+        else {
+            throw new Error('Invalid version string ' + n);
+        }
+    }
+    get major() {
+        return this.#major;
+    }
+    get minor() {
+        return this.#minor;
+    }
+    get subversion() {
+        return this.#subVersion;
+    }
+    completeMatch(v) {
+        return this.major === v.major &&
+          this.minor === v.minor &&
+          this.#subVersion === v.subversion;
+    }
+    lessThan(v) {
+        return this.major < v.major || (this.major === v.major && (this.minor < v.minor)) || (this.major === v.major && this.minor === v.minor && this.#subVersion < v.subversion);
+    }
+    toString() {
+        return `${this.major}.${this.minor}.${this.subversion}`;
+    }
+    valueOf() {
+        return this.toString();
+    }
+}
+const currentVersion = new Version('0.13');
+const changeEventVersion = new Version('0.13');
 class Form extends Container {
     _ruleEngine;
     _eventQueue;
@@ -2873,9 +2961,15 @@ class Form extends Container {
         this._ruleEngine = _ruleEngine;
         this._eventQueue = _eventQueue;
         this._logger = new Logger(logLevel);
+        this._applyDefaultsInModel();
         if (mode === 'create') {
             this.queueEvent(new Initialize());
-            this.queueEvent(new ExecuteRule());
+            if (this.changeEventBehaviour === 'deps') {
+                this.queueEvent(new Change({ changes: [] }));
+            }
+            else {
+                this.queueEvent(new ExecuteRule());
+            }
         }
         this._ids = IdGenerator();
         this._bindToDataModel(new DataGroup('$form', {}));
@@ -2884,8 +2978,15 @@ class Form extends Container {
             this.queueEvent(new FormLoad());
         }
     }
+    _applyDefaultsInModel() {
+        const current = this.specVersion;
+        this._jsonModel.properties = this._jsonModel.properties || {};
+        if (current.lessThan(changeEventVersion) ||
+          typeof this._jsonModel.properties['fd:changeEventBehaviour'] !== 'string') {
+            this._jsonModel.properties['fd:changeEventBehaviour'] = 'self';
+        }
+    }
     _logger;
-
     getActiveField() {
         return this.findActiveField(this.activeChild);
     }
@@ -2897,6 +2998,9 @@ class Form extends Container {
     }
     get logger() {
         return this._logger;
+    }
+    get changeEventBehaviour() {
+        return this.properties['fd:changeEventBehaviour'] === 'deps' ? 'deps' : 'self';
     }
     dataRefRegex = /("[^"]+?"|[^.]+?)(?:\.|$)/g;
     get metaData() {
@@ -2913,6 +3017,21 @@ class Form extends Container {
     }
     exportData() {
         return this.getDataNode()?.$value;
+    }
+    get specVersion() {
+        if (typeof this._jsonModel.adaptiveform === 'string') {
+            try {
+                return new Version(this._jsonModel.adaptiveform);
+            }
+            catch (e) {
+                console.log(e);
+                console.log('Falling back to default version' + currentVersion.toString());
+                return currentVersion;
+            }
+        }
+        else {
+            return currentVersion;
+        }
     }
     resolveQualifiedName(qualifiedName) {
         let foundFormElement = null;
@@ -3053,7 +3172,7 @@ class Form extends Container {
         }, 'valid');
         field.subscribe((action) => {
             const field = action.target.getState();
-            if (field) {
+            if (action.payload.changes.length > 0 && field) {
                 const shallowClone = (obj) => {
                     if (obj && typeof obj === 'object') {
                         if (Array.isArray(obj)) {
@@ -3073,7 +3192,7 @@ class Form extends Container {
                     };
                 });
                 const fieldChangedAction = new FieldChanged(changes, field);
-                this.dispatch(fieldChangedAction);
+                this.notifyDependents(fieldChangedAction);
             }
         });
     }
@@ -3111,7 +3230,35 @@ class Form extends Container {
             const payload = action?.payload || {};
             const successEventName = payload?.success ? payload?.success : 'submitSuccess';
             const failureEventName = payload?.error ? payload?.error : 'submitError';
-            submit(context, successEventName, failureEventName, payload?.submit_as, payload?.data);
+            const formAction = payload.action || this.action;
+            const metadata = payload.metadata || {
+                'submitMetadata': this.exportSubmitMetaData()
+            };
+            const contentType = payload?.save_as || payload?.submit_as;
+            submit(context, successEventName, failureEventName, contentType, payload?.data, formAction, metadata);
+        }
+    }
+    save(action, context) {
+        const payload = action?.payload || {};
+        payload.save_as = 'multipart/form-data';
+        payload.metadata = {
+            'draftMetadata': {
+                'lang': this.lang,
+                'draftId': this.properties?.draftId || ''
+            }
+        };
+        payload.success = 'custom:saveSuccess';
+        payload.error = 'custom:saveError';
+        this.submit(action, context);
+        this.subscribe((action) => {
+            this._saveSuccess(action);
+        }, 'saveSuccess');
+    }
+    _saveSuccess(action) {
+        const draftId = action?.payload?.body?.draftId || '';
+        const properties = this.properties;
+        if (draftId && properties) {
+            properties.draftId = draftId;
         }
     }
     reset() {
@@ -3137,7 +3284,7 @@ class Form extends Container {
         return null;
     }
     get id() {
-        return '$form';
+        return this._jsonModel.id || '$form';
     }
     get title() {
         return this._jsonModel.title || '';
@@ -3245,7 +3392,7 @@ class Fieldset extends Container {
         return undefined;
     }
     get items() {
-        return super.items;
+        return super.items ? super.items : [];
     }
     get value() {
         return null;
@@ -3284,7 +3431,12 @@ class Field extends Scriptable {
         if (_options.mode !== 'restore') {
             this._applyDefaults();
             this.queueEvent(new Initialize());
-            this.queueEvent(new ExecuteRule());
+            if (this.form.changeEventBehaviour === 'deps') {
+                this.queueEvent(new Change({ changes: [] }));
+            }
+            else {
+                this.queueEvent(new ExecuteRule());
+            }
         }
     }
     _ruleNodeReference = [];
@@ -3467,8 +3619,7 @@ class Field extends Scriptable {
     }
     set valid(e) {
         const validity = {
-            valid: e,
-            ...(e ? {} : { customConstraint: true })
+            valid: e
         };
         this._setProperty('valid', e);
         this._setProperty('validity', validity);
@@ -3684,7 +3835,7 @@ class Field extends Scriptable {
         const html5ConstraintType = constraintKeys[afConstraintKey];
         const constraintTypeMessages = getConstraintTypeMessages();
         return this._jsonModel.constraintMessages?.[afConstraintKey]
-            || replaceTemplatePlaceholders(constraintTypeMessages[html5ConstraintType], [this._jsonModel[afConstraintKey]]);
+          || replaceTemplatePlaceholders(constraintTypeMessages[html5ConstraintType], [this._jsonModel[afConstraintKey]]);
     }
     get errorMessage() {
         return this._jsonModel.errorMessage;
@@ -3844,7 +3995,7 @@ class Field extends Scriptable {
         let valid = true;
         if (valid) {
             valid = Constraints.required(this.required, value).valid &&
-                (this.isArrayType() && this.required ? value.length > 0 : true);
+              (this.isArrayType() && this.required ? value.length > 0 : true);
             constraint = 'required';
         }
         if (valid && this.isNotEmpty(value)) {
@@ -3906,12 +4057,15 @@ class Field extends Scriptable {
     }
     triggerValidationEvent(changes) {
         if (changes.validity) {
-            if (this.validity.valid) {
-                this.dispatch(new Valid());
-            }
-            else {
-                this.dispatch(new Invalid());
-            }
+            this.#triggerValidationEvent();
+        }
+    }
+    #triggerValidationEvent() {
+        if (this.validity.valid) {
+            this.dispatch(new Valid());
+        }
+        else {
+            this.dispatch(new Invalid());
         }
     }
     validate() {
@@ -3919,8 +4073,8 @@ class Field extends Scriptable {
             return [];
         }
         const changes = this.evaluateConstraints();
+        this.#triggerValidationEvent();
         if (changes.validity) {
-            this.triggerValidationEvent(changes);
             this.notifyDependents(new Change({ changes: Object.values(changes) }));
         }
         return this.valid ? [] : [new ValidationError(this.id, [this._jsonModel.errorMessage])];
@@ -3956,7 +4110,7 @@ class Field extends Scriptable {
             'validationMessage': message,
             'validity': {
                 valid: false,
-                ...(constraint != null ? { [constraintKeys[constraint]]: true } : {customConstraint: true})
+                ...(constraint != null ? { [constraintKeys[constraint]]: true } : {})
             }
         };
         const updates = this._applyUpdates(['valid', 'errorMessage', 'validationMessage', 'validity'], changes);
@@ -4274,8 +4428,8 @@ class FormFieldFactoryImpl {
             fieldFactory: this
         };
         child.fieldType = child.fieldType ? (child.fieldType in alternateFieldTypeMapping ?
-                alternateFieldTypeMapping[child.fieldType] : child.fieldType)
-            : 'text-input';
+            alternateFieldTypeMapping[child.fieldType] : child.fieldType)
+          : 'text-input';
         if (isRepeatable$1(child)) {
             const newChild = {
                 ...child,
@@ -4300,7 +4454,7 @@ class FormFieldFactoryImpl {
             };
             retVal = new InstanceManager(newJson, options);
         }
-        else if ('items' in child) {
+        else if ('items' in child || child.fieldType === 'panel') {
             retVal = new Fieldset(child, options);
         }
         else {
@@ -4333,9 +4487,11 @@ const FormFieldFactory = new FormFieldFactoryImpl();
 const createFormInstance = (formModel, callback, logLevel = 'error', fModel = undefined) => {
     try {
         let f = fModel;
-        if (f == null) {
-            formModel = sitesModelToFormModel(formModel);
-            f = new Form({ ...formModel }, FormFieldFactory, new RuleEngine(), new EventQueue(new Logger(logLevel)), logLevel);
+        {
+            if (f == null) {
+                formModel = sitesModelToFormModel(formModel);
+                f = new Form({ ...formModel }, FormFieldFactory, new RuleEngine(), new EventQueue(new Logger(logLevel)), logLevel);
+            }
         }
         const formData = formModel?.data;
         if (formData) {
@@ -4352,6 +4508,7 @@ const createFormInstance = (formModel, callback, logLevel = 'error', fModel = un
         throw new Error(e);
     }
 };
+createFormInstance.currentVersion = currentVersion;
 const defaultOptions = {
     logLevel: 'error'
 };

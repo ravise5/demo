@@ -879,7 +879,7 @@ const checkNumber = (inputVal) => {
     };
 };
 const checkInteger = (inputVal) => {
-    if (inputVal == '' || inputVal == null) {
+    if (inputVal === '' || inputVal == null) {
         return {
             value: '', valid: true
         };
@@ -2987,7 +2987,7 @@ class Form extends Container {
         }
     }
     _logger;
-    getActiveField() {
+    get activeField() {
         return this._findActiveField(this);
     }
     _findActiveField(field) {

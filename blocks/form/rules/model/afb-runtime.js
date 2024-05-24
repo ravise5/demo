@@ -18,7 +18,7 @@
  * the terms of the Adobe license agreement accompanying it.
  *************************************************************************/
 
-import { propertyChange, ExecuteRule, Initialize, RemoveItem, Change, FormLoad, FieldChanged, ValidationComplete, Valid, Invalid, SubmitSuccess, CustomEvent, SubmitError, SubmitFailure, Submit, RemoveInstance, AddInstance, Reset, AddItem, Click } from './afb-events.js';
+import { propertyChange, ExecuteRule, Initialize, RemoveItem, Change, FormLoad, FieldChanged, ValidationComplete, Valid, Invalid, SubmitSuccess, CustomEvent, SubmitError, SubmitFailure, Submit, Save, Reset, RemoveInstance, AddInstance, AddItem, Click } from './afb-events.js';
 import Formula from '../formula/index.js';
 import { format, parseDefaultDate, datetimeToNumber, parseDateSkeleton, formatDate, numberToDatetime } from './afb-formatters.min.js';
 
@@ -162,6 +162,9 @@ const isDateField = function (item) {
 const isCaptcha = function (item) {
     const fieldType = item?.fieldType || defaultFieldTypes(item);
     return fieldType === 'captcha';
+};
+const isButton = function (item) {
+    return item?.fieldType === 'button';
 };
 function deepClone(obj, idGenerator) {
     let result;
@@ -2287,9 +2290,14 @@ class FormMetaData extends Node {
 class SubmitMetaData {
     lang;
     captchaInfo;
-    constructor(lang = '', captchaInfo) {
-        this.lang = lang;
-        this.captchaInfo = captchaInfo;
+    constructor(options = {}) {
+        this.lang = options.lang || 'en';
+        this.captchaInfo = options.captchaInfo || {};
+        Object.keys(options).forEach(key => {
+            if (key !== 'lang' && key !== 'captchaInfo') {
+                this[key] = options[key];
+            }
+        });
     }
 }
 const levels = {
@@ -2649,11 +2657,16 @@ class FunctionRuntimeImpl {
                                     const eventName = 'reset';
                                     target = target || 'reset';
                                     const args = [target, eventName];
+                                    interpreter.globals.form.logger.warn('This usage of reset is deprecated. Please see the documentation and update.');
                                     return FunctionRuntimeImpl.getInstance().getFunctions().dispatchEvent._func.call(undefined, args, data, interpreter);
                                 },
                                 validate: (target) => {
                                     const args = [target];
                                     return FunctionRuntimeImpl.getInstance().getFunctions().validate._func.call(undefined, args, data, interpreter);
+                                },
+                                importData: (inputData) => {
+                                    const args = [inputData];
+                                    return FunctionRuntimeImpl.getInstance().getFunctions().importData._func.call(undefined, args, data, interpreter);
                                 },
                                 exportData: () => {
                                     return FunctionRuntimeImpl.getInstance().getFunctions().exportData._func.call(undefined, args, data, interpreter);
@@ -2677,6 +2690,14 @@ class FunctionRuntimeImpl {
                                     else if (option && option.useQualifiedName) {
                                         interpreter.globals.form.resolveQualifiedName(fieldIdentifier)?.markAsInvalid(validationMessage);
                                     }
+                                },
+                                setFocus: (target, flag) => {
+                                    const args = [target, flag];
+                                    return FunctionRuntimeImpl.getInstance().getFunctions().setFocus._func.call(undefined, args, data, interpreter);
+                                },
+                                dispatchEvent: (target, eventName, payload) => {
+                                    const args = [target, eventName, payload];
+                                    return FunctionRuntimeImpl.getInstance().getFunctions().dispatchEvent._func.call(undefined, args, data, interpreter);
                                 }
                             }
                         };
@@ -2733,7 +2754,7 @@ class FunctionRuntimeImpl {
                         validation = interpreter.globals.form.getElement(element.$id).validate();
                     }
                     if (Array.isArray(validation) && validation.length) {
-                        interpreter.globals.form.logger.error('Form Validation Error');
+                        interpreter.globals.form.logger.warn('Form Validation Error');
                     }
                     return validation;
                 },
@@ -2953,6 +2974,7 @@ const changeEventVersion = new Version('0.13');
 class Form extends Container {
     _ruleEngine;
     _eventQueue;
+    additionalSubmitMetadata = {};
     _fields = {};
     _ids;
     _invalidFields = [];
@@ -2981,6 +3003,7 @@ class Form extends Container {
     _applyDefaultsInModel() {
         const current = this.specVersion;
         this._jsonModel.properties = this._jsonModel.properties || {};
+        this._jsonModel.fieldType = this._jsonModel.fieldType || 'form';
         if (current.lessThan(changeEventVersion) ||
           typeof this._jsonModel.properties['fd:changeEventBehaviour'] !== 'string') {
             this._jsonModel.properties['fd:changeEventBehaviour'] = 'self';
@@ -3018,6 +3041,9 @@ class Form extends Container {
     exportData() {
         return this.getDataNode()?.$value;
     }
+    setAdditionalSubmitMetadata(metadata) {
+        this.additionalSubmitMetadata = { ...this.additionalSubmitMetadata, ...metadata };
+    }
     get specVersion() {
         if (typeof this._jsonModel.adaptiveform === 'string') {
             try {
@@ -3043,21 +3069,18 @@ class Form extends Container {
         return foundFormElement;
     }
     exportSubmitMetaData() {
-        let submitMetaInstance = null;
         const captchaInfoObj = {};
-        function addCaptchaField(fieldName, fieldValue) {
-            if (captchaInfoObj[fieldName]) {
-                return;
-            }
-            captchaInfoObj[fieldName] = fieldValue;
-        }
         this.visit(field => {
             if (field.fieldType === 'captcha') {
-                addCaptchaField(field.qualifiedName, field.value);
+                captchaInfoObj[field.qualifiedName] = field.value;
             }
         });
-        submitMetaInstance = new SubmitMetaData(this.form.lang, captchaInfoObj);
-        return submitMetaInstance;
+        const options = {
+            lang: this.lang,
+            captchaInfo: captchaInfoObj,
+            additionalSubmitMetadata: { ...this.additionalSubmitMetadata }
+        };
+        return new SubmitMetaData(options);
     }
     #getNavigableChildren(children) {
         return children.filter(child => child.visible === true);
@@ -3619,7 +3642,8 @@ class Field extends Scriptable {
     }
     set valid(e) {
         const validity = {
-            valid: e
+            valid: e,
+            ...(e ? {} : { customConstraint: true })
         };
         this._setProperty('valid', e);
         this._setProperty('validity', validity);
@@ -3787,6 +3811,9 @@ class Field extends Scriptable {
     }
     reset() {
         const changes = this.updateDataNodeAndTypedValue(this.default);
+        if (!changes) {
+            return;
+        }
         const validationStateChanges = {
             'valid': undefined,
             'errorMessage': '',
@@ -4110,7 +4137,7 @@ class Field extends Scriptable {
             'validationMessage': message,
             'validity': {
                 valid: false,
-                ...(constraint != null ? { [constraintKeys[constraint]]: true } : {})
+                ...(constraint != null ? { [constraintKeys[constraint]]: true } : { customConstraint: true })
             }
         };
         const updates = this._applyUpdates(['valid', 'errorMessage', 'validationMessage', 'validity'], changes);
@@ -4412,6 +4439,19 @@ class Captcha extends Field {
         return undefined;
     }
 }
+class Button extends Field {
+    click() {
+        if (this._events?.click || !this._jsonModel.buttonType) {
+            return;
+        }
+        if (this._jsonModel.buttonType === 'submit') {
+            return this.form.dispatch(new Submit());
+        }
+        if (this._jsonModel.buttonType === 'reset') {
+            return this.form.dispatch(new Reset());
+        }
+    }
+}
 const alternateFieldTypeMapping = {
     'text': 'text-input',
     'number': 'number-input',
@@ -4475,6 +4515,9 @@ class FormFieldFactoryImpl {
             }
             else if (isCaptcha(child)) {
                 retVal = new Captcha(child, options);
+            }
+            else if (isButton(child)) {
+                retVal = new Button(child, options);
             }
             else {
                 retVal = new Field(child, options);

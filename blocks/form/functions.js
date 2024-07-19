@@ -35,7 +35,8 @@ function days(endDate, startDate) {
  * @return {string}
  */
 function getCityName(globals) {
-  globals.functions.markFieldAsInvalid('$form.t1', '', { useQualifiedName: true });
+  // globals.functions.markFieldAsInvalid('$form.t1', '', { useQualifiedName: true });
+  globals.functions.setProperty(globals.form.t1, { valid: true });
 }
 
 /**

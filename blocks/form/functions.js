@@ -35,7 +35,7 @@ function days(endDate, startDate) {
  * @return {string}
  */
 function getCityName(globals) {
-  globals.functions.markFieldAsInvalid('$form.t1', 'error', { useQualifiedName: true });
+  globals.functions.markFieldAsInvalid('$form.t1', 'abc', { useQualifiedName: true });
 }
 
 /**
@@ -45,7 +45,7 @@ function getCityName(globals) {
  * @return {string}
  */
 function getCountryName(globals) {
-  globals.functions.markFieldAsInvalid('$form.t1', 'error2', { useQualifiedName: true });
+  globals.functions.markFieldAsInvalid('$form.t1', 'xyz', { useQualifiedName: true });
 }
 
 // eslint-disable-next-line import/prefer-default-export

@@ -35,8 +35,8 @@ function days(endDate, startDate) {
  * @return {string}
  */
 function getCityName(globals) {
-  // globals.functions.markFieldAsInvalid('$form.t1', '', { useQualifiedName: true });
-  globals.functions.setProperty(globals.form.t1, { valid: true });
+  globals.functions.markFieldAsInvalid('$form.t1', 'abc', { useQualifiedName: true });
+  // globals.functions.setProperty(globals.form.t1, { valid: true });
 }
 
 /**
@@ -46,6 +46,7 @@ function getCityName(globals) {
  * @return {string}
  */
 function getCountryName(globals) {
+  await fetch('https://example.com/');
   globals.functions.markFieldAsInvalid('$form.t1', 'xyz', { useQualifiedName: true });
 }
 

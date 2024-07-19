@@ -28,5 +28,25 @@ function days(endDate, startDate) {
   return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Get City Name
+ * @name getFullName Fetches city name
+ * @param {object} globals - The global object containing necessary globals form data.
+ * @return {string}
+ */
+function getCityName(globals) {
+  globals.functions.markFieldAsInvalid('$form.t1', 'error', { useQualifiedName: true });
+}
+
+/**
+ * Get Country Name
+ * @name getFullName Fetches country name
+ * @param {object} globals - The global object containing necessary globals form data.
+ * @return {string}
+ */
+function getCountryName(globals) {
+  globals.functions.markFieldAsInvalid('$form.t1', 'error2', { useQualifiedName: true });
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export { getFullName, days };
+export { getFullName, days, getCityName, getCountryName };
